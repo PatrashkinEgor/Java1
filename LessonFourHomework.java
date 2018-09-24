@@ -1,9 +1,18 @@
+/**
+ * Java. Level 1. Lesson 4. Homework
+ *
+ * @author Egor Patrashkin
+ * @version dated Sep 24, 2018
+ */
+
+
 import java.util.Random;
 import java.util.Scanner;
 
 class TicTacToe {
 
-    final int SIZE = 3;
+    final int SIZE = 10;
+    final int WINLINE = 2;      //Размер необходимой последовательности
     final char DOT_X = 'x';
     final char DOT_O = 'o';
     final char DOT_EMPTY = '.';
@@ -18,8 +27,8 @@ class TicTacToe {
     void game() {
         initMap();
         while (true) {
-            humanTurn();
-            if (checkWin(DOT_X)) {
+
+            if (humanTurn()) {
                 System.out.println("YOU WON!");
                 break;
             }
@@ -27,9 +36,9 @@ class TicTacToe {
                 System.out.println("Sorry, DRAW...");
                 break;
             }
-            aiTurn();
-            printMap();
-            if (checkWin(DOT_O)) {
+
+
+            if (aiTurn()) {
                 System.out.println("AI WON!");
                 break;
             }
@@ -57,31 +66,45 @@ class TicTacToe {
         System.out.println();
     }
 
-    void humanTurn() {
+    boolean humanTurn() {       //Теперь проверка на победу происходит во время хода игрока, по этому метод возвращает
+        // результат хода(выиграл или нет)
         int x, y;
         do {
-             System.out.println("Enter X and Y (1..3):");
-             x = sc.nextInt() - 1;
-             y = sc.nextInt() - 1;
+            System.out.println("Enter X and Y (1..3):");
+            x = sc.nextInt() - 1;
+            y = sc.nextInt() - 1;
         } while (!isCellValid(x, y));
         map[y][x] = DOT_X;
+        return checkWin(x,y, DOT_X);
     }
 
-    void aiTurn() {
+    boolean aiTurn() {
         int x, y;
         do {
-             x = rand.nextInt(SIZE);
-             y = rand.nextInt(SIZE);
+            x = rand.nextInt(SIZE);
+            y = rand.nextInt(SIZE);
         } while (!isCellValid(x, y));
         map[y][x] = DOT_O;
+        printMap();
+        return checkWin(x,y, DOT_O);
     }
 
-    boolean checkWin(char dot, int x, int y) {
+    boolean checkWin(int x, int y,char dot) {
 
-
-
-
-        /* check horizontals
+        if ((getNumberOfNeighbors(x,y, -1,0,dot) + 1 + getNumberOfNeighbors(x,y, 1,0,dot))>= WINLINE){
+            return true;
+        }
+        if ((getNumberOfNeighbors(x,y, 0,-1,dot) + 1 + getNumberOfNeighbors(x,y, 0,1,dot))>= WINLINE){
+            return true;
+        }
+        if ((getNumberOfNeighbors(x,y, 1,1,dot) + 1 + getNumberOfNeighbors(x,y, -1,-1,dot))>= WINLINE){
+            return true;
+        }
+        if ((getNumberOfNeighbors(x,y, 1,-1,dot) + 1 + getNumberOfNeighbors(x,y, -1,1,dot))>= WINLINE){
+            return true;
+        }
+        return false;
+        /*// check horizontals
         if (map[0][0] == dot && map[0][1] == dot && map[0][2] == dot) return true;
         if (map[1][0] == dot && map[1][1] == dot && map[1][2] == dot) return true;
         if (map[2][0] == dot && map[2][1] == dot && map[2][2] == dot) return true;
@@ -95,6 +118,19 @@ class TicTacToe {
         return false;
         */
     }
+
+    int getNumberOfNeighbors(int x, int y, int vx, int vy, char dot) {
+        int i = 0;
+        x = x+vx;
+        y = y+vy;
+        while ((x< SIZE)&&(x>=0)&&(y<SIZE)&&(y>=0)&&(map[y][x]==dot)){
+            x = x+vx;
+            y = y+vy;
+            i++;
+        }
+        return i;
+    }
+
 
     boolean isMapFull() {
         for (int i = 0; i < SIZE; i++)
