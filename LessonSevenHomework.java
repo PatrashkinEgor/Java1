@@ -1,11 +1,11 @@
 import java.io.IOException;
 
-import java.awt.*;
-import java.awt.event.*;
-import javax.swing.*;
+//import java.awt.*;
+//import java.awt.event.*;
+//import javax.swing.*;
+import java.util.InputMismatchException;
 import java.util.Random;
-
-
+import java.util.Scanner;
 
 
 /**
@@ -28,45 +28,46 @@ import java.util.Random;
 
 public class LessonSevenHomework {
 
-    public static Cat[] cats = new Cat[5];
-    public static Plate plate = new Plate(50);
 
     public static void main(String[] args) {
-        //Test.testString(120000);
-        //Test.testStringBuilder(120000);
-        //Test.testBufferedReader(
-        //    "C:\\Program Files\\AVAST Software\\Avast\\AvastUI.exe");
-        //Test.testFileReader(
-        //    "C:\\Program Files\\AVAST Software\\Avast\\AvastUI.exe");
-        //Singleton s1 = new Singleton();
-        //Singleton s2 = new Singleton();
-        //Singleton s1 = Singleton.getInstance();
-        //Singleton s2 = Singleton.getInstance();
-        //System.out.println(s1 + " : " + s2);
-        final int maxHungryValue = 10;
-        Random random = new Random();   // создание объекта класса Random
+        Cat[] cats = new Cat[5];
+        Plate plate = new Plate(0);
+        //MyWindow myWindow = new MyWindow();
+        cats[0] = new Cat("Alpha");
+        cats[1] = new Cat("Bravo");
+        cats[2] = new Cat("Charlie");
+        cats[3] = new Cat("Delta");
+        cats[4] = new Cat("Echo");
+        System.out.println("Feed the cats.");
 
-        MyWindow myWindow = new MyWindow();
-
-
-        cats[0].setName("Alpha");
-        cats[1].setName("Bravo");
-        cats[2].setName("Charlie");
-        cats[3].setName("Delta");
-        cats[4].setName("Echo");
-        plate.setFood(50);
         System.out.println(plate);
 
-        for (Cat cat: cats) {
-            cat.eat(plate);
-        }
-        System.out.println(plate);
-
-    }
-
-    public static void feedTheCats(Cat [] cats, Plate plate){
-        for (Cat cat: cats) {
-            cat.eat(plate);
+        while (true){
+            boolean satiety = true;
+            for (Cat cat: cats) {
+                cat.eat(plate);
+                satiety = satiety & cat.getSatiety();
+                System.out.println(cat);
+            }
+            System.out.println(plate);
+            if (satiety){
+                break;
+            } else {
+                System.out.println("Not enough food on the plate.");
+                int addiction;
+                Scanner sc = new Scanner(System.in);
+                while(true){    //Получаем размер добавки
+                    try{
+                        System.out.print("Enter the addiction:");
+                        addiction = sc.nextInt();
+                        break;
+                    } catch (InputMismatchException ex){
+                        System.out.println( "Incorrect input format!");
+                        sc.next();
+                    }
+                }
+                plate.addFood(addiction);
+            }
         }
     }
 }
@@ -90,18 +91,21 @@ class Cat {
         this.satiety = false;
     }
 
-    public void setName(String name) {
-        this.name = name;
-    }
 
     @Override
     public String toString() {
         return this.name  + " usually eats "+ this.appetite+". Now he is " + (this.satiety? "satisfied":"Hungry");
     }
+    boolean getSatiety(){
+        return this.satiety;
+    }
 
 
     void eat(Plate plate) {
-        this.satiety = plate.decreaseFood(appetite);
+        if (!this.getSatiety()){            //если кот сыт, то он не ест.
+            this.satiety = plate.decreaseFood(appetite);
+        }
+
     }
 }
 
@@ -112,9 +116,6 @@ class Plate {
         this.food = food;
     }
 
-    public void setFood(int food) {
-        this.food = food;
-    }
 
     /** Метод уменьшения еды(используется чтобы кормить котов)
      * Задача: Сделать так, чтобы в тарелке с едой не могло получиться отрицательного количества еды
@@ -149,25 +150,11 @@ class Plate {
 }
 
 
-class Test {
+/**
+ * Эксперименты со Swing
+ */
 
-    /**
-     * Testing class StringBuilder (mutable)
-     */
-    static void testStringBuilder(int cycles) {
-        System.out.print("Testing StringBuilder... ");
-        long t1 = System.currentTimeMillis();
-
-        StringBuilder a = new StringBuilder("");
-        for (int i = 0; i < cycles; i++)
-            a.append("w");
-
-        long t2 = System.currentTimeMillis();
-        System.out.println("It took " + (t2 - t1) + " mc");
-    }
-}
-
-
+/*
 
 
 class MyWindow extends JFrame {
@@ -188,14 +175,14 @@ class MyWindow extends JFrame {
         feedTheCatsButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                LessonSevenHomework.feedTheCats(LessonSevenHomework.cats, LessonSevenHomework.plate);
+                LessonSevenHomework.needToFeed = 1;
                 System.out.println("1");
             }
         });
         addFoodButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                LessonSevenHomework.plate.addFood(50);
+                LessonSevenHomework.needToAddFood = 1;
                 System.out.println("2");
             }
         });
@@ -203,3 +190,4 @@ class MyWindow extends JFrame {
     }
 }
 
+*/
