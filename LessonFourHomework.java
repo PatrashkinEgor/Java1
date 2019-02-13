@@ -22,6 +22,7 @@ class LessonFourHomework {
     final int WINLINE = 3;              //Размер необходимой последовательности
     final char DOT_X = 'x';
     final char DOT_O = 'o';
+	final char DOT_FUF = 'o';
     final char DOT_EMPTY = '.';
     char[][] map = new char[SIZE][SIZE];
     Scanner sc = new Scanner(System.in);
